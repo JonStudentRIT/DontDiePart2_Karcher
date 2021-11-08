@@ -594,7 +594,7 @@ namespace DontDiePart2
             {
                 playerAnswer = question.results[0].incorrect_answers[0];
             }
-            // if the player enters a phrase containing the correct answer case insensitive
+            // if the player enters a correct value
             if (playerAnswer.Equals("" + indexToCheck))
             {
                 Console.WriteLine();
@@ -602,7 +602,7 @@ namespace DontDiePart2
                 // output a story element
                 Console.WriteLine(story.AnswerWasRight(_.random.Next(4)));
             }
-            // if the player enters a phrase containing the incorrect answer
+            // if the player enters an incorrect value
             else
             {
                 Console.WriteLine();
