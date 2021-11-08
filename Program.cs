@@ -46,10 +46,12 @@ namespace DontDiePart2
         public static int G = 6;
         public static int H = 7;
         public static bool gameOver = false;
+        public static int start = _.A;
         public static int goal = _.H;
         public static Random random = new Random();
         public static bool timeIsUp = false;
         public static Timer timer = new Timer();
+        public static int playersOldPosition = _.A;
     }
     /* Class: Direction
      * Author: Jonathan Karcher
@@ -105,6 +107,10 @@ namespace DontDiePart2
             this.east = east;
             this.west = west;
             this.description = description;
+            //north = null;
+            //south = null;
+            //east = null;
+            //west = null;
         }
         /* Property: North
          * purpose: Return the value of north
@@ -138,13 +144,6 @@ namespace DontDiePart2
      */
     class Story
     {
-        /// <summary>
-        /// The voice is based on a combination of SCP-575 and nyarthotep
-        /// SCP-575 is a formless monster that hunts in the darkness
-        /// Nyarthotep is a "son" of yog sothoth and the only lovecraftian-eldritch god that enjoys a one on one experience with humans
-        /// Every room has a reference to either an SCP or a lovcraftian myth
-        /// fair warning: if you dont like the horror genere then let the wierd things just be wierd
-        /// </summary>
         private string howToPlay;
         private string greeting;
         private string death;
@@ -162,76 +161,76 @@ namespace DontDiePart2
         public Story()
         {
             // instructions on how to play
-            howToPlay = "How to play: As you play the game you will see the propts (Gamble) (North) (South) (East) (West).\n" +
-                "Entering any of these values case insesitive, when the prompt is available will allow the game to proceed.\n" +
+            howToPlay = "How to play: As you play the game you will see the prompts (Gamble) (North) (South) (East) (West).\n" +
+                "Entering any of these values case insensitive, when the prompt is available will allow the game to proceed.\n" +
                 "The goal of the game is to escape the labyrinth.\n" +
                 "Your Health: is the amount of health you have left.\n" +
                 "(Gamble) allows the player to gamble any amount of health up to the value displayed in \"Your Health:\".\n" +
-                "You can only die while gambleing your life. You die when the value reaches 0.\n" +
-                "Wagering your life requiers an integer value up to the value of health that the player has.\n" +
+                "You can only die while gambling your life. You die when the value reaches 0.\n" +
+                "Wagering your life requires an integer value up to the value of health that the player has.\n" +
                 "You will have 15 seconds to answer the question.\n" +
                 "(North) Travel north, (South) travel south, (East) travel east, (West) travel west.\n" +
                 "Traveling down any path will result in loss of health.\n" +
-                "Acess to a room is only available if you have enough health to travel to it.\n";
+                "Access to a room is only available if you have enough health to travel to it.\n";
 
             // initial greeting
-            greeting = "A shrill high pitch voice anounces, \"Ahhh... it wakes, I was begining to get bored!\"\n" +
-                "You call out, \"Whos there?\"\n" +
+            greeting = "A shrill high pitch voice announces, \"Ahhh... it wakes, I was beginning to get bored!\"\n" +
+                "You call out, \"Who’s there?\"\n" +
                 "\"A game of riddles is what I sought, and should you fail your life be naught!\"\n" +
-                "... clearly whoever is talking to you dosnt want to answer you question, but they arnt attacking you... yet, either.\n" +
+                "... clearly whoever is talking to you doesn’t want to answer your question, \nbut they aren’t attacking you... yet, either.\n" +
                 "You ask the darkness \"What are the rules?\"\n" +
                 "\"The question, the game, the words to maim will flow forth from me to you, \nand to the dark one phrase you need, this I promise you.\"\n" +
-                "... ok so it seems that there will be a question that I will need to answer,\"the words to maim\" seems to mean \nthat there are consiquences if im wrong.";
+                "... ok so it seems that there will be a question that I will need to answer, \"the words to maim\" \nseems to mean that there are consequences if I’m wrong.\n";
 
             // if you die
-            death = "In an instant your body fails to respond to you but time dosnt seem to stop or even slow.\n" +
-                "You lay on the floor for what seems like hours... maybe days, confused you can only wonder \"what happens after\".";
-            
+            death = "In an instant your body fails to respond to you, but time doesn’t seem to stop or even slow.\n" +
+                "You lay on the floor for what seems like hours... maybe days, confused you can only wonder \"what happens after\".\n";
+
             // when asking a question
-            askAQuestion[0] = "Ok voice in the dark im ready, ask your question.\n";
-            askAQuestion[1] = "Are you there? Im ready for a question.\n";
-            askAQuestion[2] = "Hey creapy crawller I dont have all day, make with the question.\n";
+            askAQuestion[0] = "Ok voice in the dark I’m ready, ask your question.\n";
+            askAQuestion[1] = "Are you there? I’m ready for a question.\n";
+            askAQuestion[2] = "Hey creepy crawler I don’t have all day, make with the question.\n";
             askAQuestion[3] = "A shrill voice in the dark \"You have been quiet, are you ready to play?\" Yes, ask your question.\n";
 
             // if the answer was right
-            answerWasRight[0] = "You feel imbued with new life as the voice cackles with joy \"Your right!\"... thats strange does it actually \nwant me to win.\n";
-            answerWasRight[1] = "A wound you have been trying to ignore begins to rappidly heal as you hear the voice say \"Your right!\"\n";
-            answerWasRight[2] = "A warm sensation envelopes you, the voice with a gleefull tone says \"Your right!\"\n";
-            answerWasRight[3] = "You are filled with energy as the whole room seems to become brighter. The voice anounces \"Your right!\"\n";
+            answerWasRight[0] = "You feel imbued with new life as the voice cackles with joy \"Your right!\"... that’s strange does it actually \nwant me to win.\n";
+            answerWasRight[1] = "A wound you have been trying to ignore begins to rapidly heal as you hear the voice say \"Your right!\"\n";
+            answerWasRight[2] = "A warm sensation envelopes you, the voice with a gleeful tone says \"Your right!\"\n";
+            answerWasRight[3] = "You are filled with energy as the whole room seems to become brighter. The voice announces \"Your right!\"\n";
 
             // if the answer was wrong
-            answerWasWrong[0] = "You drop to your knee as you feel the energy leave your body, as you struggle to stay concious you hear the word \n\"Wrong.\"\n";
-            answerWasWrong[1] = "A fit of coughing takes over as you feel all the air being forced from your lungs. The voice in its confusingly \nchearfull tone anounces \"Wrong.\"\n";
-            answerWasWrong[2] = "In a flash a cut appears on your chest, you clutch the wound as you look for the source as the voice anounces \"Wrong.\"\n";
-            answerWasWrong[3] = "For a moment your vision fades and in a panic you stumble and fall, hitting your head against the floor. The voice \nanounces \"Wrong.\"\n";
+            answerWasWrong[0] = "You drop to your knee as you feel the energy leave your body, as you struggle to stay conscious you hear the word \n\"Wrong.\"\n";
+            answerWasWrong[1] = "A fit of coughing takes over as you feel all the air being forced from your lungs. The voice in its confusingly \ncheerful tone announces \"Wrong.\"\n";
+            answerWasWrong[2] = "In a flash a cut appears on your chest, you clutch the wound as you look for the source as the voice announces \"Wrong.\"\n";
+            answerWasWrong[3] = "For a moment your vision fades and in a panic you stumble and fall, hitting your head against the floor. \nThe voice announces \"Wrong.\"\n";
 
             // if the player runs out of time
             ranOutOfTime[0] = "A deep chuckle fills the room, different from the voice.  With a loud boom you hear \"Times Up.\"\n";
-            ranOutOfTime[1] = "I stumped you this time didnt I... either way \"Times Up.\"\n";
+            ranOutOfTime[1] = "I stumped you this time didn’t I... either way \"Times Up.\"\n";
             ranOutOfTime[2] = "Well well well it seems \"Times Up.\", if you keep this up you'll be in the bone yard before you know it.\n";
-            ranOutOfTime[3] = "Im growing bored with your silence... its not wise to BORE me. \"Times Up.\"\n";
+            ranOutOfTime[3] = "I’m growing bored with your silence... it’s not wise to BORE me. \"Times Up.\"\n";
 
             // when walking from room to room
-            walkDamage[0] = "The path seems to have been longer than you expected and your leggs ach as you come to the end of the path.\n";
+            walkDamage[0] = "The path seems to have been longer than you expected and your legs ach as you come to the end of the path.\n";
             walkDamage[1] = "As you walk through the dark you trip over a rock and fall to the ground.\n";
             walkDamage[2] = "In the dark you misstep and trip over your own feet.\n";
-            walkDamage[3] = "A rock falls from the stone cealing striking you on the head.\n";
+            walkDamage[3] = "A rock falls from the stone ceiling striking you on the head.\n";
 
             // when walking from room to room
-            randomDamage[0] = "Leaping from the dark somthing small and furry claws at your ankles and flees off into the dark.\n";
-            randomDamage[1] = "A rock falls from the stone cealing striking you on the head.\n";
+            randomDamage[0] = "Leaping from the dark something small and furry claws at your ankles and flees off into the dark.\n";
+            randomDamage[1] = "A rock falls from the stone ceiling striking you on the head.\n";
             randomDamage[2] = "In the dark you misstep and trip over your own feet.\n";
             randomDamage[3] = "As you walk through the dark you trip over a rock and fall to the ground.\n";
 
             // the descriptions of the room
-            roomDescription[_.A] = "As you look around, the rooom is dark with bairley enough light to see.  \nThe walls are slick though its too dark to tell with what, the floor seems to be of flatend stone and the cealling... \nif there is one, is as dark as the void. \n";
-            roomDescription[_.B] = "You emerge in a dimly lit room with hardwood floors in the center a table with a candalabra \nin the shape of a man burns... you probably shouldnt touch it.  \nThe walls are painted in a substance theat shimmers like gold in the candlelight.  \n";
-            roomDescription[_.C] = "The room seems to be a perfect dome with a mirror finish, at its center a fountan flows with a strange purple fluid. \n";
-            roomDescription[_.D] = "As you enter the room you see bones scattered across the floor human and animal alike, it seems somthing was... \nor, is here and its not friendly \n";
-            roomDescription[_.E] = "Your in a room... at least your pretty sure you are.  \nIts so dark you cant see anything except a faint light a path perhaps. \n";
-            roomDescription[_.F] = "The walls are the color of blood and slick with somthing clear. \nThe floor seems to squish with every step... as you look closer you can see veins pulsing throughout the room.  \n";
-            roomDescription[_.G] = "Its cold in this room, small puddles on the floor are frozen solid and snow falls from the blindingly wight cealling \nto create a sort of hourglass... you probably shouldnt linger or you may become trapped.  \n";
-            roomDescription[_.H] = "The light... for the first time you can see the sun shine.  \nYou have survived the labyrinth.";
+            roomDescription[_.A] = "As you look around, the room is dark with barley enough light to see.  \nThe walls are slick though it’s too dark to tell with what, the floor seems \nto be of flattened stone and the ceiling... if there is one, is as dark as the void. \n";
+            roomDescription[_.B] = "You emerge in a dimly lit room with hardwood floors in the center a table with a candelabra \nin the shape of a man burns... you probably shouldn’t touch it.  \nThe walls are painted in a substance that shimmers like gold in the candlelight.  \n";
+            roomDescription[_.C] = "The room seems to be a perfect dome with a mirror finish, at its center a fountain flows with a strange purple fluid. \n";
+            roomDescription[_.D] = "As you enter the room you see bones scattered across the floor human and animal alike, it seems something was... \nor, is here and it’s not friendly \n";
+            roomDescription[_.E] = "You’re in a room... at least your pretty sure you are.  \nIt’s so dark you can’t see anything except a faint light a path perhaps. \n";
+            roomDescription[_.F] = "The walls are the color of blood and slick with something clear. \nThe floor seems to squish with every step... as you look closer you can see veins pulsing throughout the room.  \n";
+            roomDescription[_.G] = "It’s cold in this room, small puddles on the floor are frozen solid and snow falls from the blindingly white ceiling \nto create a sort of hourglass... you probably shouldn’t linger or you may become trapped.  \n";
+            roomDescription[_.H] = "The light... for the first time you can see the sunshine.  \nYou have survived the labyrinth.\n";
         }
         /* Property: HowToPlay
          * purpose: Return the value of howToPlay
@@ -321,15 +320,57 @@ namespace DontDiePart2
         {
             Console.WriteLine(story.Greeting);
             _.gameOver = false;
-            position = _.A;
+            position = _.start;
             health = 1;
         }
-        /* Method: Move
-         * Purpose: Update the player health and position based on the value entered
-         * Restrictions: None
-         */
-        public void Move(Room room, int goal)
+        public void Move((string, int)[,] matrixIn, int goal)
         {
+            // assemble a room from the matrix
+            Direction localNorth = null;
+            Direction localSouth = null;
+            Direction localEast = null;
+            Direction localWest = null;
+            for (int i = 0; i < matrixIn.GetLength(1); i++)
+            {
+                if (matrixIn[Position, i].Item1 != null)
+                {
+                    if (matrixIn[Position, i].Item1.Contains("N"))
+                    {
+                        localNorth = new Direction(i, matrixIn[Position, i].Item2);
+                    }
+                }
+            }
+            for (int i = 0; i < matrixIn.GetLength(1); i++)
+            {
+                if (matrixIn[Position, i].Item1 != null)
+                {
+                    if (matrixIn[Position, i].Item1.Contains("E"))
+                    {
+                        localEast = new Direction(i, matrixIn[Position, i].Item2);
+                    }
+                }
+            }
+            for (int i = 0; i < matrixIn.GetLength(1); i++)
+            {
+                if (matrixIn[Position, i].Item1 != null)
+                {
+                    if (matrixIn[Position, i].Item1.Contains("S"))
+                    {
+                        localSouth = new Direction(i, matrixIn[Position, i].Item2);
+                    }
+                }
+            }
+            for (int i = 0; i < matrixIn.GetLength(1); i++)
+            {
+                if (matrixIn[Position, i].Item1 != null)
+                {
+                    if (matrixIn[Position, i].Item1.Contains("W"))
+                    {
+                        localWest = new Direction(i, matrixIn[Position, i].Item2);
+                    }
+                }
+            }
+            Room room = new Room(localNorth, localSouth, localEast, localWest, story.RoomDescription(Position));
             // direction reference initialized to null
             Direction dir = null;
             // player input initialized to empty
@@ -341,7 +382,7 @@ namespace DontDiePart2
             // read the players input
             input = Console.ReadLine().ToUpper();
             // Note: the string can be anything just not empty or there is an error
-            if(input.Equals(""))
+            if (input.Equals(""))
             {
                 input = "_";
             }
@@ -358,22 +399,29 @@ namespace DontDiePart2
                 {
                     input = Console.ReadLine();
                     Console.WriteLine();
-                    if(int.TryParse(input, out amount))
+                    if (int.TryParse(input, out amount))
                     {
                         // if they try to barter health that they dont have
-                        if(amount > health)
+                        if (amount > health)
                         {
                             Console.WriteLine("You dont have that much life to wager.\n");
                         }
                         // if they try to cheat the system by entering a negative number and intentionally getting questions wrong
-                        if(amount < 0)
+                        if (amount < 0)
                         {
                             Console.WriteLine("HA, nice try but no, entering a negative value wont get you out of this one.\n");
                             // I think ill still alow a value of 0 so the player can try a few questions before risking death
                         }
                     }
+                    // if they didnt enter a number
+                    else
+                    {
+                        Console.WriteLine("Thats not an integer.\n");
+                    }
                 } while (!int.TryParse(input, out amount) || amount > health || amount < 0);
                 health += GambleForHealth(amount);
+                // exit the function to avoid any drop through effects
+                return;
             }
             // if the player does not want to gamble
             // chech if the player has enough life and entered a valid direction
@@ -400,6 +448,18 @@ namespace DontDiePart2
                 if (Health > dir.Weight)
                 {
                     TakeWalkDamage(dir);
+                }
+            }
+            // if they enterd an invalid direction
+            else
+            {
+                if (input[0] == 'N' || input[0] == 'S' || input[0] == 'E' || input[0] == 'W')
+                {
+                    Console.WriteLine("That is not a direction you can go.\n");
+                }
+                else
+                {
+                    Console.WriteLine("That is not a direction.\n");
                 }
             }
         }
@@ -457,6 +517,10 @@ namespace DontDiePart2
             int answerCout;
             // a reference for a random index to mix up the answers
             int randomIndex;
+            // a reference to display the input options for answering the questions
+            int index;
+            // a reference used to find the right answer
+            int indexToCheck;
             // url where questions originate
             string url = "https://opentdb.com/api.php?amount=1&category=15&type=multiple";
             // streams to manage getting the question and answers from the web
@@ -501,20 +565,37 @@ namespace DontDiePart2
             // output the question
             Console.WriteLine(question.results[0].question+"\n");
             // output all of the mixed answers
+            index = 1;
             foreach(string answer in answersMixed)
             {
-                Console.WriteLine(answer);
+                Console.WriteLine("("+ index +") "+answer);
+                index++;
             }
+            // because im bad at trivia
+            //Console.WriteLine("(Correct) " + question.results[0].correct_answer);
             // get the answer from the player
             playerAnswer = Console.ReadLine();
-            //playerAnswer = question.results[0].correct_answer;
+            if(!playerAnswer.Equals("1") || playerAnswer.Equals("2") || playerAnswer.Equals("3") || playerAnswer.Equals("4"))
+            {
+                Console.WriteLine("Its your life your playing with.\n");
+            }
+            //figure out which index is the right answer
+            indexToCheck = 0;
+            foreach (string answer in answersMixed)
+            {
+                indexToCheck++;
+                if (answer.Contains(question.results[0].correct_answer))
+                {
+                    break;
+                }
+            }
             // if the player has runout of time then force their answer to be wrong
             if (_.timeIsUp)
             {
                 playerAnswer = question.results[0].incorrect_answers[0];
             }
             // if the player enters a phrase containing the correct answer case insensitive
-            if(playerAnswer.ToUpper().Contains(question.results[0].correct_answer.ToUpper()))
+            if (playerAnswer.Equals("" + indexToCheck))
             {
                 Console.WriteLine();
                 toReturn = amount;
@@ -554,6 +635,12 @@ namespace DontDiePart2
             Console.WriteLine(story.WalkDamage(_.random.Next(4)));
             // Note: random damage must always come after walk damage or the player could die
             TakeRandomDamage();
+            if (_.playersOldPosition != Position)
+            {
+                // output the description of the room
+                Console.WriteLine(story.RoomDescription(Position));
+                _.playersOldPosition = Position;
+            }
         }
         /* Method: TakeRandomDamage
          * Purpose: Remove a random amount of health
@@ -562,7 +649,7 @@ namespace DontDiePart2
         public void TakeRandomDamage()
         {
             // if the room is not A or H
-            if (position != _.A && position != _.H)
+            if (position != _.start && position != _.goal)
             {
                 // remove between up to all but one point of health from the player
                 health -= _.random.Next(1, health);
@@ -603,41 +690,41 @@ namespace DontDiePart2
             // create a new story
             Story story = new Story();
             // create a new player
-            Player player = new Player(_.A, story);
-            
-            // Dont Die data using a dedicated class 
-            // [origin] (direction(destination,weight))(...)(...)(...), description
-            Room[] rooms = new Room[8];
-            rooms[_.A] = new Room(new Direction(_.A, 0), new Direction(_.B, 2), new Direction(_.A, 0), null , story.RoomDescription(_.A));
-            rooms[_.B] = new Room(null, new Direction(_.C, 2), new Direction(_.D, 3), null, story.RoomDescription(_.B));
-            rooms[_.C] = new Room(new Direction(_.B, 2), new Direction(_.H, 20), null, null, story.RoomDescription(_.C));
-            rooms[_.D] = new Room(new Direction(_.E, 2), new Direction(_.C, 5), new Direction(_.F, 4), new Direction(_.B, 3), story.RoomDescription(_.D));
-            rooms[_.E] = new Room(null, new Direction(_.F, 3), null, null, story.RoomDescription(_.E));
-            rooms[_.F] = new Room(null, null, new Direction(_.G, 1), null, story.RoomDescription(_.F));
-            rooms[_.G] = new Room(new Direction(_.E, 0), new Direction(_.H, 2), null, null, story.RoomDescription(_.G));
-            rooms[_.H] = new Room(null, null, null, null, story.RoomDescription(_.H));
+            Player player = new Player(_.start, story);
+
+            // Dont Die data in matrix form
+            //          [destination]
+            // [origin] north, south, east, west
+            (string, int)[,] adjacencyMatrix =
+            /*  *//*  A*//*       B*//*     C*//*       D*//*       E*//*       F*//*       G*//*        H*/
+            /*A*/{ {("NE", 0),  ("S", 2),  (null,-1), (null,-1),  (null,-1),  (null,-1),  (null,-1),  (null,-1) },
+            /*B  */{(null,-1),  (null,-1), ("S", 2),  ("E", 3),   (null,-1),  (null,-1),  (null,-1),  (null,-1) },
+            /*C  */{(null,-1),  ("N", 2),  (null,-1), (null,-1),  (null,-1),  (null,-1),  (null,-1),  ("S",20) },
+            /*D  */{(null,-1),  ("W", 3),  ("S", 5),  (null,-1),  ("N", 2),   ("E", 4),   (null,-1),  (null,-1) },
+            /*E  */{(null,-1),  (null,-1), (null,-1), (null,-1),  (null,-1),  ("S", 3),   (null,-1),  (null,-1) },
+            /*F  */{(null,-1),  (null,-1), (null,-1), (null,-1),  (null,-1),  (null,-1),  ("E", 1),    (null,-1) },
+            /*G  */{(null,-1),  (null,-1), (null,-1), (null,-1),  ("N", 0),   (null,-1),  (null,-1),  ("S", 2) },
+            /*H  */{(null,-1),  (null,-1), (null,-1), (null,-1),  (null,-1),  (null,-1),  (null,-1),  (null,-1) } };
+
             // how to play
             Console.WriteLine(story.HowToPlay);
             Console.WriteLine("(press enter to continue)");
             Console.ReadLine();
             // output an initial greeting
             Console.WriteLine(story.Greeting);
+            Console.WriteLine(story.RoomDescription(_.start));
             // as long as the player is alive
             while (!_.gameOver)
             {
-                // output the description of the room
-                Console.WriteLine(rooms[player.Position].Description);
                 // move the player
-                player.Move(rooms[player.Position], _.goal);
+                player.Move(adjacencyMatrix, _.goal);
                 // check if the player has died at any point durring the move
                 player.DeadCheck();
-                // if the player has reached the goal
-                if(player.Position == _.goal)
+                // if the player has died or survived manage a replay option
+                if (player.Position == _.goal)
                 {
-                    Console.WriteLine(rooms[_.goal].Description);
                     _.gameOver = true;
                 }
-                // if the player has died manage a replay option
                 if(_.gameOver)
                 {
                     string input = "";
